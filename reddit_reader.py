@@ -15,31 +15,45 @@ class RedditReader():
     subreddit = object.subreddit
     query_text = object.query_text
     limit = object.limit
+    sort_order = object.sort_order
 
     # Create a search_query for caching
     search_query = f"subreddit='{subreddit}' limit={limit} query_text='{query_text}'"
 
+    # Creating a list for Reddit Response
+    responseList = []
+    
     # Search if in database - if not use the API
     if search_query in db:
-      return db[search_query]
+      responseList = db[search_query]
     else:
       results_list = self.get_submissions(subreddit, query_text, limit) + self.get_comments(subreddit, query_text, limit)
 
-      # Creating a list for RedditResponse
-      responseList =[]
-
       # Creating Record instances extracting link and text
       for result in results_list:
-        if isinstance(result, praw.models.Submission):
-          record = {'text':result.title, 'link':result.url}
-        else:
-          record = {'text':result.body, 'link':result.permalink}
+
+        # Setting the variables
+        text = result.title if isinstance(result, praw.models.Submission) else result.body
+        link = "https://www.reddit.com" + result.permalink
+        time = (result.created_utc)
+
+        # Creating the Record Object
+        record = {'text':text, 'link':link, 'time':time}
 
         # Appending each dictionary in List
         responseList.append(record)
 
       db[search_query] = responseList
+
+    # Find if sorting Required or Not
+    if sort_order == 0:
       return responseList
+    if sort_order == 1:
+      # Sort by Time-Stamp
+      return sorted(responseList, key=lambda record:record['time'])
+    if sort_order == -1:
+      # Sort by Time-Stamp Negative
+      return sorted(responseList, key=lambda record:record['time'], reverse=True)
       
 
   # Function to retrieve all submissions

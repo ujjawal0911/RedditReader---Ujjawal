@@ -3,11 +3,29 @@ import models
 
 reader = reddit_reader.RedditReader()
 
+# How to use RedditReader()
+# 1. Create an object with 2 mandatory parameters
+#    - subreddit - str format - name of subreddit - case sensitive
+#    - query_text - str format - query you want to format
+# 2. Optional Parameters
+#    - sort_order - int - 0(default), 1(ascending-order), -1(descending-order)
+#    - limit - int - 10(default), limits the number of submissions and no of submissions to match comments
+
+#     Example
+# -----------------
+# reader.get(
+#   models.RedditRequest(
+#     subreddit="developersIndia",
+#     query_text="javascript",
+#     sort_order="Descending",
+#   )
+# )
 
 print(reader.get(
   models.RedditRequest(
     subreddit="developersIndia",
-    query_text="javascript"
+    query_text="python",
+    sort_order=1,
   )
 ))
 

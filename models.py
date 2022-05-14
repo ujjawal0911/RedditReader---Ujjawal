@@ -10,6 +10,7 @@ class RedditRequest(BaseModel):
     subreddit: O[str]
     limit: O[int] = 10
     query_text: O[str]
+    sort_order: O[int] = 0
 
 
 class Record(BaseModel):
