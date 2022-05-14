@@ -1,30 +1,15 @@
 import reddit_reader
 import models
-import praw
-# import db
 
 reader = reddit_reader.RedditReader()
 
-# class TestClass:
-#   subreddit = "developersindia"
-#   query_text = "python"
-#   limit = 10
 
-# testObject = TestClass()
-# print(reader.get(testObject))
-
-# response = []
-# for result in reader.get(testObject):
-#   if isinstance(result, praw.models.submission):
-#     record = models.Record(result.title, result.url)
-#   else:
-#     record = models.Record(result.body, result.url)
-
-#   response.append(record)
-
-
-
-
+print(reader.get(
+  models.RedditRequest(
+    subreddit="developersIndia",
+    query_text="javascript"
+  )
+))
 
 # Task 1 -- get all reddit posts / comments that match a query
 #

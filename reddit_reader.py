@@ -1,5 +1,6 @@
 # https://praw.readthedocs.io/en/stable/getting_started/quick_start.html
 import praw
+from replit import db
 
 # Configuring the Praw API
 redditAPI = praw.Reddit(
@@ -15,7 +16,31 @@ class RedditReader():
     query_text = object.query_text
     limit = object.limit
 
-    return self.get_submissions(subreddit, query_text, limit) + self.get_comments(subreddit, query_text, limit)
+    # Create a search_query for caching
+    search_query = f"subreddit='{subreddit}' limit={limit} query_text='{query_text}'"
+
+    # Search if in database - if not use the API
+    if search_query in db:
+      return db[search_query]
+    else:
+      results_list = self.get_submissions(subreddit, query_text, limit) + self.get_comments(subreddit, query_text, limit)
+
+      # Creating a list for RedditResponse
+      responseList =[]
+
+      # Creating Record instances extracting link and text
+      for result in results_list:
+        if isinstance(result, praw.models.Submission):
+          record = {'text':result.title, 'link':result.url}
+        else:
+          record = {'text':result.body, 'link':result.permalink}
+
+        # Appending each dictionary in List
+        responseList.append(record)
+
+      db[search_query] = responseList
+      return responseList
+      
 
   # Function to retrieve all submissions
   def get_submissions(self, subreddit, query_text, limit):
